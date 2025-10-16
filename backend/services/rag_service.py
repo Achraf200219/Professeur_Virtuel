@@ -69,8 +69,8 @@ class RAGService:
     def __init__(self):
         self.collection_name = "test-deepseek-r1"
         self.config = {
-            'qdrant_api_key': "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.gD1elgW9H120V6C8cvy75S6DrG99JORECGuGHF3zNc4",
-            'qdrant_url': "https://23ab1818-07f7-4bd5-998b-ba6c9475e6dd.us-east4-0.gcp.cloud.qdrant.io:6333",
+            'qdrant_api_key': "YOUR_API_HERE",
+            'qdrant_url': "qdrant_URL",
             'model_version': "deepseek-r1:1.5b",
             'similarity_threshold': 0.7,
             'use_web_search': False,

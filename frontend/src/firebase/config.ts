@@ -13,13 +13,13 @@ import { getFirestore } from 'firebase/firestore';
 
 // Paramètres de configuration du projet Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyBXOTOzcDLWsRj9mPLoE_3vqVcXnxNejak",
-  authDomain: "virtual-professor-ai.firebaseapp.com",
-  projectId: "virtual-professor-ai",
-  storageBucket: "virtual-professor-ai.firebasestorage.app",
-  messagingSenderId: "683294968765",
-  appId: "1:683294968765:web:0b36e30894ad9d99ec20d4",
-  measurementId: "G-1H49Q9T5F8"
+  apiKey: "",
+  authDomain: "",
+  projectId: "",
+  storageBucket: "",
+  messagingSenderId: "",
+  appId: "",
+  measurementId: ""
 };
 
 // Initialisation de l'application Firebase
