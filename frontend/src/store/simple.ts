@@ -1,0 +1,133 @@
+import { ChatMessage, AppConfig, StatusResponse } from '../types';
+
+// Gestionnaire d'état simple pour l'application
+class AppStore {
+  private listeners: Set<() => void> = new Set();
+  
+  public state = {
+    config: {
+      qdrant_api_key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.gD1elgW9H120V6C8cvy75S6DrG99JORECGuGHF3zNc4",
+      qdrant_url: "https://23ab1818-07f7-4bd5-998b-ba6c9475e6dd.us-east4-0.gcp.cloud.qdrant.io:6333",
+      model_version: "deepseek-r1:1.5b",
+      similarity_threshold: 0.7,
+      use_web_search: false,
+      rag_enabled: true,
+      force_web_search: false,
+      dark_mode: false,
+  openrouter_api_key: undefined,
+  openrouter_model: undefined,
+    } as AppConfig,
+    messages: [] as ChatMessage[],
+    processedDocuments: [] as string[],
+    status: null as StatusResponse | null,
+    isLoading: false,
+    sidebarOpen: true,
+  };
+
+  subscribe = (listener: () => void) => {
+    this.listeners.add(listener);
+    return () => this.listeners.delete(listener);
+  };
+
+  private notify = () => {
+    this.listeners.forEach(listener => listener());
+  };
+
+  updateConfig = (newConfig: Partial<AppConfig>) => {
+    this.state.config = { ...this.state.config, ...newConfig };
+    this.notify();
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('deepseek-rag-config', JSON.stringify(this.state.config));
+    }
+  };
+
+  addMessage = (message: ChatMessage) => {
+    this.state.messages = [...this.state.messages, message];
+    this.notify();
+  };
+
+  clearMessages = () => {
+    this.state.messages = [];
+    this.notify();
+  };
+
+  addDocument = (filename: string) => {
+    this.state.processedDocuments = [...this.state.processedDocuments, filename];
+    this.notify();
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('deepseek-rag-documents', JSON.stringify(this.state.processedDocuments));
+    }
+  };
+
+  clearDocuments = () => {
+    this.state.processedDocuments = [];
+    this.notify();
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem('deepseek-rag-documents');
+    }
+  };
+
+  setStatus = (status: StatusResponse) => {
+    this.state.status = status;
+    this.notify();
+  };
+
+  setLoading = (loading: boolean) => {
+    this.state.isLoading = loading;
+    this.notify();
+  };
+
+  setSidebarOpen = (open: boolean) => {
+    this.state.sidebarOpen = open;
+    this.notify();
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('deepseek-rag-sidebar', JSON.stringify(open));
+    }
+  };
+
+  init = () => {
+    if (typeof localStorage === 'undefined') return;
+    
+    try {
+      const savedConfig = localStorage.getItem('deepseek-rag-config');
+      if (savedConfig) {
+        this.state.config = { ...this.state.config, ...JSON.parse(savedConfig) };
+      }
+
+      const savedDocuments = localStorage.getItem('deepseek-rag-documents');
+      if (savedDocuments) {
+        this.state.processedDocuments = JSON.parse(savedDocuments);
+      }
+
+      const savedSidebar = localStorage.getItem('deepseek-rag-sidebar');
+      if (savedSidebar) {
+        this.state.sidebarOpen = JSON.parse(savedSidebar);
+      }
+    } catch (error) {
+      console.error('Failed to load from localStorage:', error);
+    }
+  };
+}
+
+export const appStore = new AppStore();
+appStore.init();
+
+// Hook will be implemented when React is available
+export const useAppStore = () => {
+  return {
+    config: appStore.state.config,
+    updateConfig: appStore.updateConfig,
+    messages: appStore.state.messages,
+    addMessage: appStore.addMessage,
+    clearMessages: appStore.clearMessages,
+    processedDocuments: appStore.state.processedDocuments,
+    addDocument: appStore.addDocument,
+    clearDocuments: appStore.clearDocuments,
+    status: appStore.state.status,
+    setStatus: appStore.setStatus,
+    isLoading: appStore.state.isLoading,
+    setLoading: appStore.setLoading,
+    sidebarOpen: appStore.state.sidebarOpen,
+    setSidebarOpen: appStore.setSidebarOpen,
+  };
+};

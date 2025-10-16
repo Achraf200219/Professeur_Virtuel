@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+python-multipart
+pydantic
+agno
+langchain
+langchain-community
+langchain-qdrant
+qdrant-client
+pypdf
+duckduckgo-search
+ollama
+beautifulsoup4
+requests
+python-dotenv
+trafilatura
